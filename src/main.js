@@ -13,7 +13,7 @@ function btoa(str) {
   return Buffer.from(str).toString('base64')
 }
 
-function generateResult(status, testName, command, message, duration, maxScore) {
+function generateResult(status, testName, command, message, duration, maxScore, score) {
   return {
     version: 1,
     status,
@@ -22,7 +22,7 @@ function generateResult(status, testName, command, message, duration, maxScore) 
       {
         name: testName,
         status,
-        score: status === 'pass' ? maxScore : 0,
+        score: score,
         message,
         test_code: command,
         filename: '',
@@ -49,7 +49,8 @@ function getErrorMessageAndStatus(error, command) {
 function run() {
   const testName = core.getInput('test-name', {required: true})
   const setupCommand = core.getInput('setup-command')
-  const command = core.getInput('command', {required: true})
+  const command = core.getInput('command', { required: true })
+  const resultFile = core.getInput('result-file') || '.autograder_result'
   const timeout = parseFloat(core.getInput('timeout') || 10) * 60000 // Convert to minutes
   const maxScore = parseInt(core.getInput('max-score') || 0)
 
@@ -67,11 +68,15 @@ function run() {
     output = execSync(command, {timeout, env, stdio: 'inherit'})?.toString()
     endTime = new Date()
 
-    result = generateResult('pass', testName, command, output, endTime - startTime, maxScore)
+    let score
+    // read a int from the result file
+    score = parseInt(execSync(`cat ${resultFile}`, {timeout, env, stdio: 'pipe'})?.toString())
+
+    result = generateResult('pass', testName, command, output, endTime - startTime, maxScore, score)
   } catch (error) {
     endTime = new Date()
     const {status, errorMessage} = getErrorMessageAndStatus(error, command)
-    result = generateResult(status, testName, command, errorMessage, endTime - startTime, maxScore)
+    result = generateResult(status, testName, command, errorMessage, endTime - startTime, maxScore, 0)
   }
 
   core.setOutput('result', btoa(JSON.stringify(result)))
