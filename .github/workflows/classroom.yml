@@ -19,7 +19,7 @@ jobs:
       with:
         test-name: test
         setup-command: 
-        command: echo "666" > .autograder_result
+        command: echo "666.6" > .autograder_result
         timeout: 10
         max-score: 1000
     - name: Autograding Reporter
