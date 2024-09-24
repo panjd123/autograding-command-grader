@@ -64,6 +64,8 @@ function run() {
       execSync(setupCommand, {timeout, env, stdio: 'inherit'})
     }
 
+    execSync(`rm -f ${resultFile}`, { timeout, env, stdio: 'inherit' })
+
     startTime = new Date()
     output = execSync(command, {timeout, env, stdio: 'inherit'})?.toString()
     endTime = new Date()
