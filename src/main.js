@@ -72,7 +72,11 @@ function run() {
 
     let score
     // score = parseInt(execSync(`cat ${resultFile}`, {timeout, env, stdio: 'pipe'})?.toString())
-    score = parseFloat(execSync(`cat ${resultFile}`, {timeout, env, stdio: 'pipe'})?.toString())
+    score = parseFloat(execSync(`cat ${resultFile}`, { timeout, env, stdio: 'pipe' })?.toString())
+    
+    if (score == 0) {
+      throw new Error('Zero score')
+    }
 
     result = generateResult('pass', testName, command, output, endTime - startTime, maxScore, score)
   } catch (error) {
