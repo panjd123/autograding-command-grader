@@ -69,8 +69,8 @@ function run() {
     endTime = new Date()
 
     let score
-    // read a int from the result file
-    score = parseInt(execSync(`cat ${resultFile}`, {timeout, env, stdio: 'pipe'})?.toString())
+    // score = parseInt(execSync(`cat ${resultFile}`, {timeout, env, stdio: 'pipe'})?.toString())
+    score = parseFloat(execSync(`cat ${resultFile}`, {timeout, env, stdio: 'pipe'})?.toString())
 
     result = generateResult('pass', testName, command, output, endTime - startTime, maxScore, score)
   } catch (error) {
